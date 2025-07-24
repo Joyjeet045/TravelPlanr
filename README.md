@@ -49,18 +49,43 @@
 
 ```mermaid
 flowchart TD
-    User["User"] -->|"Question"| Assistant["Primary Assistant"]
-    Assistant -->|"Intent Routing"| Flights["Flight Agent"]
-    Assistant --> Hotels["Hotel Agent"]
-    Assistant --> Cars["Car Rental Agent"]
-    Assistant --> Excursions["Excursion Agent"]
-    Assistant --> Policy["Policy Retriever"]
-    Flights -->|"DB/API"| DB[(Database)]
-    Hotels --> DB
-    Cars --> DB
-    Excursions --> DB
-    Policy --> Docs[(Policy Docs)]
+    User["User"]
+    subgraph AssistantGraph["Primary Assistant (LangGraph)"]
+        Assistant["Intent Router"]
+        subgraph SpecializedAgents["Specialized Agents"]
+            Flights["Flight Agent"]
+            Hotels["Hotel Agent"]
+            Cars["Car Rental Agent"]
+            Excursions["Excursion Agent"]
+        end
+        Policy["Policy Retriever (RAG)"]
+        Approval["User Approval/Interrupt"]
+    end
+    DB[(Database)]
+    VectorDB[(Policy Vector Store)]
+
+    User -- "Message" --> Assistant
+    Assistant -- "Tool Call" --> SpecializedAgents
+    Assistant -- "Policy Query" --> Policy
+    Policy -- "Vector Search" --> VectorDB
+    Flights -- "DB Query" --> DB
+    Hotels -- "DB Query" --> DB
+    Cars -- "DB Query" --> DB
+    Excursions -- "DB Query" --> DB
+    SpecializedAgents -- "Sensitive Action?" --> Approval
+    Approval -- "User Confirms/Denies" --> Assistant
+    Approval -- "If approved: Tool Call" --> SpecializedAgents
+    Approval -- "If denied: Ask for changes" --> User
+    SpecializedAgents -- "Result/Response" --> Assistant
+    Policy -- "Policy Text" --> Assistant
+    Assistant -- "Response" --> User
 ```
+
+**Flow Explanation:**
+- The user sends a message to the assistant, which routes the request to the appropriate specialized agent (flight, hotel, car rental, excursion) or the policy retriever.
+- For policy questions, the assistant uses RAG to retrieve relevant text from a vector store.
+- For sensitive actions (like booking/cancelling), the assistant triggers a conditional interrupt, asking the user for approval before proceeding.
+- All tool calls (DB queries, bookings, etc.) are handled by specialized agents, and results are returned to the user in a conversational flow.
 
 ---
 
