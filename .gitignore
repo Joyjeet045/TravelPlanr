@@ -1,0 +1,82 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/__pycache__/
+
+# SQLite/DB files
+*.sqlite
+*.backup.sqlite
+*.db
+notebooks/*.sqlite
+notebooks/*.db
+notebooks/*.backup.sqlite
+travel_assistant/*.sqlite
+travel_assistant/*.db
+travel_assistant/*.backup.sqlite
+
+# Logs
+*.log
+
+# mypy
+.mypy_cache/
+
+# pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+coverage.xml
+
+# Caches
+.cache/
+.ruff_cache/
+.hypothesis/
+.benchmarks/
+
+# PyCharm/IDEA
+.idea/
+
+# Build
+*.egg-info/
+dist/
+build/
+
+# PDM
+.pdm.toml
+.pdm.lock
+
+# Python version
+.python-version
+
+# History
+.history
+
+# Editor config
+.envrc
+.editorconfig
+.gitattributes
+.gitmodules
+
+# Windows
+Thumbs.db
+
+# Allow README
+!README.md 
