@@ -16,6 +16,7 @@ if overwrite or not os.path.exists(local_file):
     shutil.copy(local_file, backup_file)
 
 def update_dates(file):
+    """Update all relevant date fields in the database to be current and realistic for testing."""
     shutil.copy(backup_file, file)
     conn = sqlite3.connect(file)
     cursor = conn.cursor()

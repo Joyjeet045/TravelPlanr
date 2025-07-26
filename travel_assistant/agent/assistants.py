@@ -3,21 +3,26 @@ from langchain_core.runnables import Runnable, RunnableConfig
 import time
 
 class Assistant:
-    def __init__(self, runnable: Runnable):
+    def __init__(self, runnable: Runnable, context_window: int = 20):
         self.runnable = runnable
+        self.context_window = context_window
     def __call__(self, state, config: RunnableConfig):
         max_retries = 10
         retries = 0
         while retries < max_retries:
             try:
-                result = self.runnable.invoke(state)
+                # Only pass the last N messages as context window
+                truncated_state = dict(state)
+                if "messages" in truncated_state:
+                    truncated_state["messages"] = truncated_state["messages"][-self.context_window:]
+                result = self.runnable.invoke(truncated_state)
                 if not result.tool_calls and (
                     not result.content
                     or (isinstance(result.content, list)
                         and not result.content[0].get("text"))
                 ):
-                    messages = state["messages"] + [("user", "Respond with a real output.")]
-                    state = {**state, "messages": messages}
+                    messages = truncated_state["messages"] + [("user", "Respond with a real output.")]
+                    truncated_state = {**truncated_state, "messages": messages}
                     retries += 1
                 else:
                     return {"messages": result}
@@ -28,6 +33,8 @@ class Assistant:
         return {"messages": "Sorry, I couldn't get a valid response from the assistant."}
 
 class CompleteOrEscalate(BaseModel):
+    """A tool to mark the current task as completed and/or to escalate control of the dialog to the main assistant,
+    who can re-route the dialog based on the user's needs."""
     cancel: bool = True
     reason: str
     class Config:
@@ -47,11 +54,13 @@ class CompleteOrEscalate(BaseModel):
         }
 
 class ToFlightBookingAssistant(BaseModel):
+    """Transfers work to a specialized assistant to handle flight updates and cancellations."""
     request: str = Field(
         description="Any necessary followup questions the update flight assistant should clarify before proceeding."
     )
 
 class ToBookCarRental(BaseModel):
+    """Transfers work to a specialized assistant to handle car rental bookings."""
     location: str = Field(
         description="The location where the user wants to rent a car."
     )
@@ -71,6 +80,7 @@ class ToBookCarRental(BaseModel):
         }
 
 class ToHotelBookingAssistant(BaseModel):
+    """Transfer work to a specialized assistant to handle hotel bookings."""
     location: str = Field(
         description="The location where the user wants to book a hotel."
     )
@@ -90,6 +100,7 @@ class ToHotelBookingAssistant(BaseModel):
         }
 
 class ToBookExcursion(BaseModel):
+    """Transfers work to a specialized assistant to handle trip recommendation and other excursion bookings."""
     location: str = Field(
         description="The location where the user wants to book a recommended trip."
     )

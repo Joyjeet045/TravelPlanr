@@ -3,6 +3,7 @@ from typing_extensions import TypedDict
 from langgraph.graph.message import AnyMessage, add_messages
 
 def update_dialog_stack(left: list[str], right: Optional[str]) -> list[str]:
+    """Push or pop the dialog state stack."""
     if right is None:
         return left
     if right == "pop":
@@ -10,6 +11,7 @@ def update_dialog_stack(left: list[str], right: Optional[str]) -> list[str]:
     return left + [right]
 
 class State(TypedDict):
+    """Graph state for the travel assistant dialog system."""
     messages: Annotated[list[AnyMessage], add_messages]
     user_info: str
     dialog_state: Annotated[
