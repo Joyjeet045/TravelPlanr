@@ -1,0 +1,13 @@
+langgraph
+langchain-core
+langchain-community
+langchain-groq
+tavily-python
+pandas
+requests
+sentence-transformers
+python-dateutil
+pytz
+typing_extensions
+pydantic
+groq
