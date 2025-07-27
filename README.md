@@ -68,35 +68,6 @@
 
 ---
 
-## 📁 Folder Structure
-
-```
-travel_assistant/
-├── main.py                # Entry point
-├── config.py              # Env setup
-├── database/
-│   └── db_utils.py        # DB logic
-├── tools/
-│   ├── flights.py         # Flight tools
-│   ├── hotels.py          # Hotel tools
-│   ├── car_rentals.py     # Car rental tools
-│   ├── excursions.py      # Excursion tools
-│   └── policies.py        # Policy RAG
-├── agent/
-│   ├── prompts.py         # Prompts
-│   ├── assistants.py      # Agent classes
-│   ├── state.py           # State logic
-│   └── graph.py           # Graph/routing
-├── utils/
-│   └── print_utils.py     # Print/error utils
-├── notebooks/
-│   └── customer_support.ipynb # Reference notebook
-├── requirements.txt
-└── README.md
-```
-
----
-
 ## 🤝 Contributing
 
 Pull requests, issues, and suggestions are welcome! Please open an issue or PR for any improvements or bug fixes.
